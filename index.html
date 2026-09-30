@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="重症肌無力 MGFA 臨床分類、MG-ADL 計分、肌無力危機急診處置（血漿置換與 IVIG 選擇）及免疫治療管理。">
+<title>重症肌無力決策台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: clinical console — masthead + tabbed workspaces; crisis tab = vertical emergency pathway (left) + sticky triage summary (right) */
+:root{
+  --paper:#f3f5f8; --panel:#ffffff; --ink:#17202b; --ink-2:#4b5667; --ink-3:#7b8596; --line:#d6dce4; --line-2:#e8ecf1;
+  --accent:#2350a0; --accent-ink:#ffffff; --accent-soft:#e4ecf8;
+  --go:#2d7a4c; --go-soft:#e2f1e7; --warn:#946708; --warn-soft:#faf0d9; --stop:#b3372b; --stop-soft:#f8e2de;
+  --f-display:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#0f141b; --panel:#171e28; --ink:#e5eaf1; --ink-2:#a5b0c0; --ink-3:#768193; --line:#29323f; --line-2:#1f2733;
+  --accent:#86aef0; --accent-ink:#0d1a30; --accent-soft:#1b2a44;
+  --go:#65c48b; --go-soft:#162a1f; --warn:#e4b852; --warn-soft:#2d2612; --stop:#f08a7a; --stop-soft:#381e1a; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#0f141b; --panel:#171e28; --ink:#e5eaf1; --ink-2:#a5b0c0; --ink-3:#768193; --line:#29323f; --line-2:#1f2733;
+  --accent:#86aef0; --accent-ink:#0d1a30; --accent-soft:#1b2a44;
+  --go:#65c48b; --go-soft:#162a1f; --warn:#e4b852; --warn-soft:#2d2612; --stop:#f08a7a; --stop-soft:#381e1a; color-scheme:dark }
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65}
+.wrap{max-width:1220px;margin:0 auto;padding-inline:20px;padding-block:0 56px}
+@media (max-width:520px){.wrap{padding-inline:16px}}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;font-weight:700;letter-spacing:.01em}
+h1{font-size:clamp(24px,3.2vw,32px);line-height:1.25}
+h3{font-size:16.5px}
+p{margin:0}
+.muted{color:var(--ink-2)} .small{font-size:13px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+.masthead{padding-block:28px 0;display:grid;gap:8px}
+.masthead .sub{color:var(--ink-2);max-width:72ch}
+.src{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.src span{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--ink-2);background:var(--panel)}
+.tabs{display:flex;gap:4px;margin-top:18px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{appearance:none;border:0;background:none;font:inherit;color:var(--ink-2);padding:10px 14px 11px;cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;font-weight:500}
+.tab b{font-family:var(--f-mono);font-weight:500;color:var(--ink-3);margin-right:6px;font-size:13px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab[aria-selected="true"] b{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+section.pane{padding-top:22px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;min-width:0}
+.card>h3{margin-bottom:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stack{display:grid;gap:16px;min-width:0}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end}
+.field{display:grid;gap:4px;min-width:0}
+.field>label,.flabel{font-size:12.5px;color:var(--ink-2);font-weight:500}
+input[type=number],select{font:inherit;font-size:14px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:6px 8px;min-width:0;max-width:100%}
+input[type=number]{width:84px;font-family:var(--f-mono)}
+.u{font-size:12px;color:var(--ink-3);font-family:var(--f-mono);white-space:nowrap}
+.inl{display:flex;gap:6px;align-items:center}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:14px;cursor:pointer;padding:4px 0}
+.check input{margin-top:5px;accent-color:var(--accent);flex:none}
+.btn{appearance:none;font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:7px;padding:6px 12px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--paper)}
+.seg button{appearance:none;border:0;background:transparent;font:inherit;font-size:13.5px;padding:4px 11px;border-radius:6px;color:var(--ink-2);cursor:pointer;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.pill{display:inline-block;font-size:11.5px;font-weight:500;border-radius:999px;padding:1px 9px;white-space:nowrap;vertical-align:1px}
+.pill.ev{background:var(--accent-soft);color:var(--accent)}
+.pill.go{background:var(--go-soft);color:var(--go)} .pill.warn{background:var(--warn-soft);color:var(--warn)} .pill.stop{background:var(--stop-soft);color:var(--stop)}
+.sample{font-size:12px;color:var(--warn);background:var(--warn-soft);border-radius:999px;padding:1px 10px;font-weight:500}
+.note{font-size:13px;color:var(--ink-2);border-left:3px solid var(--line);padding:4px 0 4px 12px}
+.alert{border-radius:8px;padding:10px 12px;font-size:14px;display:grid;gap:4px}
+.alert.warn{background:var(--warn-soft)} .alert.warn strong{color:var(--warn)}
+.alert.stop{background:var(--stop-soft)} .alert.stop strong{color:var(--stop)}
+.alert.go{background:var(--go-soft)} .alert.go strong{color:var(--go)}
+.alert.info{background:var(--accent-soft)} .alert.info strong{color:var(--accent)}
+ul.plain{margin:6px 0 0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip span{display:inline-block;font-size:13.5px;border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;background:var(--paper);color:var(--ink-2);user-select:none}
+.chip input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chip.bad input:checked+span{background:var(--stop);border-color:var(--stop);color:#fff}
+.chip input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line-2);vertical-align:top}
+th{font-weight:500;color:var(--ink-2);font-size:12.5px;white-space:nowrap}
+.tablebox{overflow-x:auto}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.sticky{position:sticky;top:calc(12px + env(safe-area-inset-top,0px))}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,370px);gap:18px;align-items:start}
+@media (max-width:980px){.two{grid-template-columns:minmax(0,1fr)}}
+
+/* MGFA class ladder */
+.ladder{display:grid;gap:4px;margin-top:4px}
+.lad{display:grid;grid-template-columns:52px minmax(0,1fr);gap:10px;align-items:center;padding:7px 10px;border-radius:8px;border:1px solid transparent;font-size:13.5px;color:var(--ink-2)}
+.lad b{font-family:var(--f-mono);font-size:14px;font-weight:500;color:var(--ink-3)}
+.lad.on{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
+.lad.on b{color:var(--accent)}
+.lad.crit.on{background:var(--stop-soft);border-color:var(--stop)} .lad.crit.on b{color:var(--stop)}
+.bigcls{font-family:var(--f-mono);font-size:44px;line-height:1;font-weight:500}
+.adl{display:grid;gap:0}
+.adl .it{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line-2)}
+.adl .it:last-child{border-bottom:0}
+@media (max-width:560px){.adl .it{grid-template-columns:minmax(0,1fr)}}
+.adl .seg button{font-size:12.5px;padding:4px 8px}
+.adl .seg button b{font-family:var(--f-mono);font-weight:500;margin-right:4px}
+.total{display:flex;align-items:baseline;gap:8px}
+.total b{font-family:var(--f-mono);font-size:40px;font-weight:500;line-height:1}
+.total span{font-family:var(--f-mono);color:var(--ink-3)}
+
+/* pathway */
+.node{position:relative;padding-left:52px;padding-bottom:18px}
+.node::before{content:"";position:absolute;left:17px;top:38px;bottom:0;width:2px;background:var(--line)}
+.node:last-child::before{display:none}
+.node .dot{position:absolute;left:0;top:10px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-size:14px;background:var(--panel);border:2px solid var(--accent);color:var(--accent);z-index:1}
+.node.hot .dot{border-color:var(--stop);background:var(--stop);color:#fff}
+.node-h{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+.node-h h3{font-size:17px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 12px}
+@media (max-width:640px){.grid3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.grid3 input[type=number]{width:100%}
+.meters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+@media (max-width:640px){.meters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.m{border:1px solid var(--line-2);border-radius:8px;padding:8px 10px;background:var(--paper)}
+.m .k{font-size:12px;color:var(--ink-2)}
+.m .v{font-family:var(--f-mono);font-size:20px;font-variant-numeric:tabular-nums}
+.m .v small{font-size:12px;color:var(--ink-3);margin-left:3px}
+.m.bad{border-color:var(--stop);background:var(--stop-soft)} .m.bad .v{color:var(--stop)}
+.m.mid{border-color:var(--warn);background:var(--warn-soft)} .m.mid .v{color:var(--warn)}
+.m .t{font-size:11.5px;color:var(--ink-3)}
+.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:560px){.vs{grid-template-columns:minmax(0,1fr)}}
+.vs .col{border:1px solid var(--line);border-radius:10px;padding:12px}
+.vs .col.win{border-color:var(--go);box-shadow:0 0 0 1px var(--go) inset}
+.vs .col h3{font-size:16px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.score{height:8px;border-radius:4px;background:var(--line-2);overflow:hidden;margin:8px 0}
+.score i{display:block;height:100%;background:var(--accent)}
+.col.win .score i{background:var(--go)}
+.col ul{margin:6px 0 0;padding-left:18px;font-size:13.5px;display:grid;gap:3px;color:var(--ink-2)}
+.dose{font-family:var(--f-mono);font-size:13px;background:var(--paper);border-radius:6px;padding:8px 10px;margin-top:8px;line-height:1.6}
+.opt{padding:9px 0 9px 12px;border-left:3px solid var(--line);margin-top:8px}
+.opt.first{border-left-color:var(--go)} .opt.alt{border-left-color:var(--accent)} .opt.avoid{border-left-color:var(--stop)}
+.opt .t{font-weight:700;font-size:14.5px;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.opt .d{font-size:13.5px;color:var(--ink-2)}
+.refs{padding-left:20px;margin:0;display:grid;gap:8px;font-size:13.8px}
+.refs a{color:var(--accent)}
+.refgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:860px){.refgrid{grid-template-columns:minmax(0,1fr)}}
+.disclaimer{margin-top:22px;font-size:13px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:14px;max-width:90ch}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);font-size:13.5px;padding:8px 16px;border-radius:999px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <div class="eyebrow">Myasthenia gravis · Crisis &amp; immunotherapy decision support</div>
+    <h1>重症肌無力決策台</h1>
+    <p class="sub">MGFA 臨床分類與 MG-ADL 計分、肌無力危機的急診處置流程（呼吸評估、誘因排除、血漿置換與 IVIG 的選擇與併發症風險），以及依 MGFA 國際共識整理的免疫治療管理。</p>
+    <div class="src"><span>MGFA 臨床分類 2000</span><span>MGFA 國際共識 2016</span><span>MGFA 國際共識 2020 更新</span><span>MG-ADL</span></div>
+    <nav class="tabs" role="tablist" aria-label="功能分頁">
+      <button class="tab" role="tab" id="tab-cls" aria-controls="cls" data-t="cls"><b>1</b>MGFA 分類與評估</button>
+      <button class="tab" role="tab" id="tab-crisis" aria-controls="crisis" data-t="crisis"><b>2</b>肌無力危機急診處置</button>
+      <button class="tab" role="tab" id="tab-imm" aria-controls="imm" data-t="imm"><b>3</b>免疫治療管理</button>
+      <button class="tab" role="tab" id="tab-ref" aria-controls="ref" data-t="ref"><b>4</b>用藥禁忌與文獻</button>
+    </nav>
+  </header>
+
+  <!-- ============ 1. Classification ============ -->
+  <section class="pane" id="cls" role="tabpanel" aria-labelledby="tab-cls" hidden>
+    <div class="two">
+      <div class="stack">
+        <div class="card">
+          <h3>MGFA 臨床分類 <span class="sample" id="c-sample">示例</span></h3>
+          <div class="stack" style="gap:12px">
+            <label class="check"><input type="checkbox" id="c-ocular"><span>有眼肌無力（眼瞼下垂、複視；可含閉眼無力）</span></label>
+            <div class="field"><span class="flabel">眼肌以外的肌肉無力程度</span>
+              <div class="seg" id="c-sev"><button data-v="0" aria-pressed="false">無</button><button data-v="1" aria-pressed="false">輕度</button><button data-v="2" aria-pressed="false">中度</button><button data-v="3" aria-pressed="false">重度</button></div></div>
+            <div class="field" id="c-pred-wrap"><span class="flabel">主要受影響的肌群</span>
+              <div class="seg" id="c-pred"><button data-v="a" aria-pressed="false">a：肢體或軸心肌為主</button><button data-v="b" aria-pressed="false">b：口咽或呼吸肌為主（或兩者相當）</button></div></div>
+            <div>
+              <label class="check"><input type="checkbox" id="c-tube"><span>需要鼻胃管餵食，但未插管</span></label>
+              <label class="check"><input type="checkbox" id="c-intub"><span>氣管插管（有無使用呼吸器），常規術後照護除外</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="justify-content:space-between">MG-ADL 日常活動量表 <span class="total"><b id="adl-total">0</b><span>/ 24</span></span></h3>
+          <p class="small muted" style="margin-bottom:6px">依病人過去一週的狀況選擇。總分改善 ≥ 2 分具臨床意義。</p>
+          <div class="adl" id="adl"></div>
+        </div>
+        <div class="card">
+          <h3>血清型與胸腺</h3>
+          <div class="row">
+            <div class="field"><label for="c-sero">抗體</label><select id="c-sero"><option value="achr">AChR 抗體陽性</option><option value="musk">MuSK 抗體陽性</option><option value="lrp4">LRP4 抗體陽性</option><option value="neg">血清陰性</option></select></div>
+            <div class="field"><label for="c-thy">胸腺影像</label><select id="c-thy"><option value="none">無胸腺瘤</option><option value="thymoma">胸腺瘤</option><option value="hyper">胸腺增生</option><option value="post">已切除胸腺</option></select></div>
+          </div>
+          <p class="small muted" style="margin-top:8px">血清型會帶入「免疫治療管理」分頁，影響胸腺切除、rituximab 與標靶生物製劑的建議。</p>
+        </div>
+      </div>
+      <aside class="card sticky" aria-live="polite">
+        <span class="eyebrow">MGFA 分類</span>
+        <div class="row" style="align-items:baseline;margin:6px 0 10px"><span class="bigcls" id="c-cls">—</span><span id="c-lbl" class="muted"></span></div>
+        <div class="ladder" id="c-ladder"></div>
+        <div id="c-out" style="margin-top:12px"></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ 2. Crisis ============ -->
+  <section class="pane" id="crisis" role="tabpanel" aria-labelledby="tab-crisis" hidden>
+    <div class="two">
+      <div>
+        <div class="node" id="k1"><div class="dot">1</div>
+          <div class="card">
+            <div class="node-h"><h3>呼吸與延髓功能評估</h3><span class="sample" id="k-sample">示例個案，請改成實際資料</span></div>
+            <div class="grid3">
+              <div class="field"><label for="k-wt">體重</label><div class="inl"><input type="number" id="k-wt" min="20" max="200"><span class="u">kg</span></div></div>
+              <div class="field"><label for="k-sex">性別</label><select id="k-sex"><option value="f">女</option><option value="m">男</option></select></div>
+              <div class="field"><label for="k-age">年齡</label><div class="inl"><input type="number" id="k-age" min="10" max="100"><span class="u">歲</span></div></div>
+              <div class="field"><label for="k-fvc">用力肺活量 FVC</label><div class="inl"><input type="number" id="k-fvc" min="0" max="7000" step="50"><span class="u">mL</span></div></div>
+              <div class="field"><label for="k-nif">最大吸氣壓 NIF</label><div class="inl"><input type="number" id="k-nif" min="-150" max="0" step="1"><span class="u">cmH₂O</span></div></div>
+              <div class="field"><label for="k-mep">最大吐氣壓 MEP</label><div class="inl"><input type="number" id="k-mep" min="0" max="250" step="1"><span class="u">cmH₂O</span></div></div>
+              <div class="field"><label for="k-co2">PaCO₂</label><div class="inl"><input type="number" id="k-co2" min="15" max="120"><span class="u">mmHg</span></div></div>
+              <div class="field"><label for="k-fvc0">前次 FVC（選填）</label><div class="inl"><input type="number" id="k-fvc0" min="0" max="7000" step="50"><span class="u">mL</span></div></div>
+            </div>
+            <div class="flabel" style="margin-top:12px">床邊徵象</div>
+            <div class="chips" id="k-signs" style="margin-top:6px"></div>
+            <div class="meters" id="k-meters"></div>
+            <div id="k-resp" style="margin-top:12px"></div>
+            <p class="small muted" style="margin-top:8px">血氧正常不代表呼吸肌功能安全，高碳酸血症是晚期表現。臉部無力時以面罩測量 FVC。</p>
+          </div>
+        </div>
+        <div class="node" id="k2"><div class="dot">2</div>
+          <div class="card">
+            <div class="node-h"><h3>找出誘因、排除膽鹼性危機</h3></div>
+            <div class="flabel">可能誘因</div>
+            <div class="chips" id="k-trig" style="margin:6px 0 12px"></div>
+            <div class="flabel">近期使用、可能加重肌無力的藥物</div>
+            <div class="chips" id="k-drugs" style="margin:6px 0 12px"></div>
+            <div class="flabel">膽鹼性症狀（大量使用 pyridostigmine 時）</div>
+            <div class="chips" id="k-chol" style="margin-top:6px"></div>
+            <div id="k-trig-out" style="margin-top:12px"></div>
+          </div>
+        </div>
+        <div class="node" id="k3"><div class="dot">3</div>
+          <div class="card">
+            <div class="node-h"><h3>快速免疫治療：血漿置換或 IVIG</h3></div>
+            <p class="small muted" style="margin-bottom:8px">MGFA 共識：兩者用於嚴重全身型重症肌無力療效相當，選擇取決於病人因素與院內資源。勾選適用的狀況：</p>
+            <div class="row" style="gap:16px;align-items:flex-start">
+              <div style="flex:1 1 260px;min-width:0"><div class="flabel">不利於血漿置換</div><div id="k-pe-risk"></div></div>
+              <div style="flex:1 1 260px;min-width:0"><div class="flabel">不利於 IVIG</div><div id="k-iv-risk"></div></div>
+            </div>
+            <div class="row" style="margin:10px 0 14px">
+              <div class="field"><label for="k-hct">Hct</label><div class="inl"><input type="number" id="k-hct" min="15" max="60" step="1"><span class="u">%</span></div></div>
+              <div class="field"><label for="k-ivdays">IVIG 分幾天</label><select id="k-ivdays"><option value="5">5 天</option><option value="2">2 天</option></select></div>
+            </div>
+            <div class="vs" id="k-vs"></div>
+            <div id="k-choice" style="margin-top:12px"></div>
+          </div>
+        </div>
+        <div class="node" id="k4"><div class="dot">4</div>
+          <div class="card">
+            <div class="node-h"><h3>同步啟動或調整長期免疫治療</h3></div>
+            <div id="k-imm"></div>
+          </div>
+        </div>
+        <div class="node" id="k5"><div class="dot">5</div>
+          <div class="card">
+            <div class="node-h"><h3>支持性照護與脫離呼吸器</h3></div>
+            <ul class="plain">
+              <li><b>Pyridostigmine</b>：插管期間暫停，減少呼吸道分泌物；脫離呼吸器前以低劑量重新開始。</li>
+              <li><b>感染</b>：選擇對神經肌肉接合處影響小的抗生素，避免 fluoroquinolone、aminoglycoside、macrolide。</li>
+              <li><b>預防</b>：深部靜脈栓塞預防、吸入性肺炎防護、早期鼻胃管營養、胃潰瘍預防（高劑量類固醇）。</li>
+              <li><b>監測</b>：每 2–4 小時測 FVC 與 NIF；電解質（鉀、鎂、磷）與血糖。</li>
+              <li><b>脫離時機</b>：FVC 與 NIF 持續回升（如 FVC &gt; 15–20 mL/kg、NIF 比 −20 至 −25 cmH₂O 更負），分泌物可處理時再做自發呼吸測試。高齡、肺擴張不全與肺炎會增加拔管失敗風險。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <aside class="stack sticky">
+        <div class="card" aria-live="polite">
+          <h3>分流結果</h3>
+          <div id="k-sum"></div>
+          <div class="row" style="margin-top:12px"><button class="btn primary" id="k-copy">複製病歷摘要</button><button class="btn" id="k-reset">清除個案</button></div>
+        </div>
+        <div class="card">
+          <h3>危機辨識重點</h3>
+          <ul class="plain small">
+            <li>「20/30/40」：FVC &lt; 20 mL/kg、NIF 弱於 −30 cmH₂O、MEP &lt; 40 cmH₂O 提示呼吸衰竭風險高。</li>
+            <li>FVC 在數小時內下降 &gt; 30% 為警訊。</li>
+            <li>頸屈肌無力與呼吸肌無力程度常相關。</li>
+            <li>無法清除分泌物或反覆嗆咳時，即使 FVC 尚可也應考慮保護呼吸道。</li>
+            <li>PaCO₂ &lt; 50 mmHg 且無嚴重延髓無力時，可嘗試 BiPAP 以避免插管。</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ 3. Immunotherapy ============ -->
+  <section class="pane" id="imm" role="tabpanel" aria-labelledby="tab-imm" hidden>
+    <div class="two">
+      <div class="card">
+        <h3>病人狀況 <span class="sample" id="m-sample">示例</span></h3>
+        <div class="grid3">
+          <div class="field"><label for="m-age">年齡</label><div class="inl"><input type="number" id="m-age" min="5" max="100"><span class="u">歲</span></div></div>
+          <div class="field"><label for="m-sero">抗體</label><select id="m-sero"><option value="achr">AChR 陽性</option><option value="musk">MuSK 陽性</option><option value="lrp4">LRP4 陽性</option><option value="neg">血清陰性</option></select></div>
+          <div class="field"><label for="m-type">型態</label><select id="m-type"><option value="gen">全身型</option><option value="ocu">眼肌型</option></select></div>
+          <div class="field"><label for="m-thy">胸腺</label><select id="m-thy"><option value="none">無胸腺瘤</option><option value="thymoma">胸腺瘤</option><option value="hyper">胸腺增生</option><option value="post">已切除</option></select></div>
+          <div class="field"><label for="m-pred">Prednisolone 目前劑量</label><div class="inl"><input type="number" id="m-pred" min="0" max="100" step="2.5"><span class="u">mg/日</span></div></div>
+          <div class="field"><label for="m-predmo">已使用</label><div class="inl"><input type="number" id="m-predmo" min="0" max="240"><span class="u">月</span></div></div>
+        </div>
+        <div class="field" style="margin-top:12px"><span class="flabel">治療目標</span>
+          <div class="seg" id="m-goal"><button data-v="met" aria-pressed="false">已達最小症狀表現 (MMS) 或更好</button><button data-v="not" aria-pressed="false">未達目標</button></div></div>
+        <div class="flabel" style="margin-top:12px">已使用過的非類固醇免疫抑制劑</div>
+        <div class="chips" id="m-used" style="margin-top:6px"></div>
+        <div class="flabel" style="margin-top:12px">病人因素</div>
+        <div class="chips" id="m-risk" style="margin-top:6px"></div>
+      </div>
+      <aside class="card sticky" aria-live="polite">
+        <h3>目前階段</h3>
+        <div id="m-stage"></div>
+      </aside>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h3>建議</h3>
+      <div id="m-out"></div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h3>常用免疫治療藥物</h3>
+      <div class="tablebox"><table id="m-tbl"><thead><tr><th>藥物</th><th>劑量</th><th>起效</th><th>監測與注意</th></tr></thead><tbody></tbody></table></div>
+      <p class="small muted" style="margin-top:8px">生物製劑的適應症與健保給付條件請依最新健保藥品給付規定。</p>
+    </div>
+  </section>
+
+  <!-- ============ 4. Reference ============ -->
+  <section class="pane" id="ref" role="tabpanel" aria-labelledby="tab-ref" hidden>
+    <div class="refgrid">
+      <div class="card">
+        <h3>可能加重重症肌無力的藥物</h3>
+        <div class="tablebox"><table><thead><tr><th>類別</th><th>藥物</th><th>建議</th></tr></thead><tbody>
+          <tr><td>抗生素</td><td>Telithromycin</td><td><span class="pill stop">禁用</span></td></tr>
+          <tr><td>抗生素</td><td>Fluoroquinolone、aminoglycoside、macrolide（azithromycin、erythromycin）</td><td><span class="pill warn">避免，必要時密切監測</span></td></tr>
+          <tr><td>電解質</td><td>靜脈注射鎂</td><td><span class="pill warn">避免；必須使用時監測肌力</span></td></tr>
+          <tr><td>免疫</td><td>免疫檢查點抑制劑</td><td><span class="pill warn">可能誘發或加重，需與腫瘤科討論</span></td></tr>
+          <tr><td>其他</td><td>D-penicillamine</td><td><span class="pill stop">禁用（可誘發 MG）</span></td></tr>
+          <tr><td>神經毒素</td><td>肉毒桿菌素</td><td><span class="pill warn">避免</span></td></tr>
+          <tr><td>心血管</td><td>β 阻斷劑、procainamide、quinidine</td><td><span class="pill warn">謹慎使用</span></td></tr>
+          <tr><td>抗瘧</td><td>Chloroquine、hydroxychloroquine、quinine</td><td><span class="pill warn">謹慎使用</span></td></tr>
+          <tr><td>麻醉</td><td>神經肌肉阻斷劑</td><td><span class="pill warn">降低劑量並監測</span></td></tr>
+          <tr><td>類固醇</td><td>高劑量起始</td><td><span class="pill warn">5–10 天內可能短暫惡化</span></td></tr>
+          <tr><td>顯影劑</td><td>含碘顯影劑</td><td><span class="pill warn">少數加重，需觀察</span></td></tr>
+          <tr><td>降血脂</td><td>Statin</td><td><span class="pill warn">少數加重，需觀察</span></td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <h3>肌無力危機與膽鹼性危機</h3>
+          <div class="tablebox"><table><thead><tr><th></th><th>肌無力危機</th><th>膽鹼性危機</th></tr></thead><tbody>
+            <tr><td>成因</td><td>疾病惡化</td><td>乙醯膽鹼酯酶抑制劑過量</td></tr>
+            <tr><td>瞳孔</td><td>正常</td><td>縮小</td></tr>
+            <tr><td>分泌物</td><td>正常</td><td>大量流涎、支氣管分泌物</td></tr>
+            <tr><td>腸胃</td><td>正常</td><td>腹絞痛、腹瀉</td></tr>
+            <tr><td>肌肉</td><td>無力</td><td>無力合併肌束震顫</td></tr>
+            <tr><td>心跳</td><td>正常或偏快</td><td>心搏過慢</td></tr>
+            <tr><td>處置</td><td>血漿置換／IVIG</td><td>停用 pyridostigmine，必要時 atropine</td></tr>
+          </tbody></table></div>
+          <p class="small muted" style="margin-top:8px">膽鹼性危機在一般劑量下很少見。兩者都可能需要呼吸支持，處置原則都是先確保呼吸道，並暫停 pyridostigmine。</p>
+        </div>
+      </div>
+      <div class="card" style="grid-column:1/-1">
+        <h3>參考文獻</h3>
+        <ol class="refs">
+          <li>Jaretzki A 3rd, et al. Myasthenia gravis: recommendations for clinical research standards. Task Force of the Medical Scientific Advisory Board of the MGFA. <i>Neurology</i> 2000;55:16–23.</li>
+          <li>Sanders DB, et al. International consensus guidance for management of myasthenia gravis: executive summary. <i>Neurology</i> 2016;87:419–425. <a href="https://doi.org/10.1212/WNL.0000000000002790" target="_blank" rel="noopener">doi:10.1212/WNL.0000000000002790</a></li>
+          <li>Narayanaswami P, et al. International consensus guidance for management of myasthenia gravis: 2020 update. <i>Neurology</i> 2021;96:114–122. <a href="https://doi.org/10.1212/WNL.0000000000011124" target="_blank" rel="noopener">doi:10.1212/WNL.0000000000011124</a></li>
+          <li>Wolfe GI, et al. Myasthenia gravis activities of daily living profile. <i>Neurology</i> 1999;52:1487–1489.</li>
+          <li>Wolfe GI, et al. Randomized trial of thymectomy in myasthenia gravis (MGTX). <i>N Engl J Med</i> 2016;375:511–522.</li>
+          <li>Barth D, et al. Comparison of IVIg and PLEX in patients with myasthenia gravis. <i>Neurology</i> 2011;76:2017–2023.</li>
+          <li>Seneviratne J, et al. Noninvasive ventilation in myasthenic crisis. <i>Arch Neurol</i> 2008;65:54–58.</li>
+          <li>台灣神經學學會神經肌肉疾病相關共識與健保藥品給付規定（請以最新公告版本為準）。</li>
+        </ol>
+      </div>
+    </div>
+    <p class="disclaimer">本工具為臨床決策輔助與教學用途，不能取代醫師對個別病人的完整評估。肌無力危機屬醫療急症，應依院內急重症流程處置；藥物劑量、禁忌與交互作用請以仿單及院內處方集為準。</p>
+  </section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),1800);}
+function copyText(txt){const ok=()=>toast('已複製到剪貼簿');const fb=()=>{const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){toast('無法自動複製，請手動選取');}ta.remove();};try{navigator.clipboard.writeText(txt).then(ok,fb);}catch(e){fb();}}
+function segBind(sel,cb){$$(sel+' button').forEach(b=>b.addEventListener('click',()=>{segSet(sel,b.dataset.v);cb(b.dataset.v);}));}
+function segSet(sel,v){$$(sel+' button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===String(v)?'true':'false'));}
+function chipSet(el,list,set,cls,pref){$(el).innerHTML=list.map(([k,t])=>`<label class="chip${cls?' '+cls:''}"><input type="checkbox" id="${pref}-${k}" data-k="${k}"${set.has(k)?' checked':''}><span>${esc(t)}</span></label>`).join('');}
+function chipBind(el,set,cb){$$(el+' input').forEach(i=>i.addEventListener('change',()=>{i.checked?set.add(i.dataset.k):set.delete(i.dataset.k);cb();}));}
+const TABS=['cls','crisis','imm','ref'];
+function showTab(id){TABS.forEach(t=>{$('#'+t).hidden=t!==id;$('#tab-'+t).setAttribute('aria-selected',t===id?'true':'false');});try{localStorage.setItem('mg-tab',id);}catch(e){}}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.t)));
+
+/* ================= 1. MGFA class ================= */
+const C={ocular:true,sev:3,pred:'b',tube:true,intub:false,adl:[2,2,3,2,1,1,2,3]};
+const LAD=[['I','僅眼肌無力（可含閉眼無力），其他肌力正常'],['IIa','輕度，肢體或軸心肌為主'],['IIb','輕度，口咽或呼吸肌為主'],['IIIa','中度，肢體或軸心肌為主'],['IIIb','中度，口咽或呼吸肌為主'],['IVa','重度，肢體或軸心肌為主'],['IVb','重度，口咽或呼吸肌為主（含需鼻胃管但未插管）'],['V','需氣管插管，有無使用呼吸器皆算']];
+const ADL=[['說話',['正常','間歇含糊或鼻音','持續含糊或鼻音，可聽懂','難以聽懂']],['咀嚼',['正常','吃固體食物易累','吃軟質食物易累','需鼻胃管']],['吞嚥',['正常','偶爾嗆到','常嗆到，需調整飲食','需鼻胃管']],['呼吸',['正常','用力時喘','休息時喘','需呼吸器']],['刷牙或梳頭',['無困難','費力但不需休息','需要休息','無法完成']],['從椅子站起',['無困難','輕度，有時需用手撐','中度，總是需用手撐','重度，需他人協助']],['複視',['無','有，但非每天','每天，但非持續','持續']],['眼瞼下垂',['無','有，但非每天','每天，但非持續','持續']]];
+$('#adl').innerHTML=ADL.map((a,i)=>`<div class="it"><div>${a[0]}</div><div class="seg" id="adl-${i}" role="group" aria-label="${a[0]}">${a[1].map((t,s)=>`<button data-v="${s}" aria-pressed="false"><b>${s}</b>${esc(t)}</button>`).join('')}</div></div>`).join('');
+ADL.forEach((_,i)=>segBind('#adl-'+i,v=>{C.adl[i]=+v;$('#c-sample').hidden=true;renderCls();}));
+segBind('#c-sev',v=>{C.sev=+v;$('#c-sample').hidden=true;renderCls();});
+segBind('#c-pred',v=>{C.pred=v;$('#c-sample').hidden=true;renderCls();});
+['ocular','tube','intub'].forEach(k=>$('#c-'+k).addEventListener('change',e=>{C[k]=e.target.checked;$('#c-sample').hidden=true;renderCls();}));
+function mgfa(){
+  if(C.intub)return'V';
+  if(C.tube)return'IVb';
+  if(C.sev===0)return C.ocular?'I':'—';
+  return ['','II','III','IV'][C.sev]+C.pred;
+}
+function fillCls(){$('#c-ocular').checked=C.ocular;$('#c-tube').checked=C.tube;$('#c-intub').checked=C.intub;segSet('#c-sev',C.sev);segSet('#c-pred',C.pred);C.adl.forEach((v,i)=>segSet('#adl-'+i,v));}
+function renderCls(){
+  const c=mgfa(),adl=C.adl.reduce((a,b)=>a+b,0);
+  $('#c-pred-wrap').style.opacity=C.sev===0?.5:1;
+  $('#c-cls').textContent=c;$('#adl-total').textContent=adl;
+  const lab=LAD.find(l=>l[0]===c);$('#c-lbl').textContent=lab?lab[1]:'尚無肌無力表現';
+  $('#c-ladder').innerHTML=LAD.map(l=>`<div class="lad${l[0]===c?' on':''}${['IVb','V'].includes(l[0])?' crit':''}"><b>${l[0]}</b><span>${esc(l[1])}</span></div>`).join('');
+  const bulbar=C.adl[1]+C.adl[2]+C.adl[3];
+  let o='';
+  if(c==='V'||c==='IVb')o+=`<div class="alert stop"><strong>${c==='V'?'肌無力危機':'瀕臨危機'}</strong><span class="small">進入急診處置流程，評估呼吸功能並準備血漿置換或 IVIG。</span><button class="btn" data-go="crisis" style="justify-self:start;margin-top:4px">前往危機處置流程</button></div>`;
+  else if(c.startsWith('IV')||c.endsWith('b'))o+=`<div class="alert warn"><strong>口咽或呼吸肌受影響</strong><span class="small">密切監測 FVC 與吞嚥功能，惡化時及早使用快速免疫治療。</span></div>`;
+  if(C.adl[3]>=2)o+=`<div class="alert stop" style="margin-top:8px"><strong>MG-ADL 呼吸項目 ${C.adl[3]} 分</strong><span class="small">休息時喘或需呼吸器，應立即評估呼吸功能。</span></div>`;
+  o+=`<p class="small muted" style="margin-top:8px">MG-ADL ${adl} 分（延髓與呼吸項目合計 ${bulbar}）。分類以最嚴重的肌群判定，病程中最嚴重的分類也應記錄。</p>`;
+  $('#c-out').innerHTML=o;
+  $$('#c-out [data-go]').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.go)));
+}
+$('#c-sero').addEventListener('change',e=>{$('#m-sero').value=e.target.value;M.sero=e.target.value;K.musk=e.target.value==='musk';renderImm();renderCrisis();});
+$('#c-thy').addEventListener('change',e=>{$('#m-thy').value=e.target.value;M.thy=e.target.value;renderImm();});
+
+/* ================= 2. Crisis ================= */
+const SIGNS=[['bulbar','吞嚥困難或反覆嗆咳'],['secr','無法清除分泌物'],['neck','頸屈肌無力'],['count','無法一口氣數到 20'],['para','腹部矛盾呼吸'],['acc','使用呼吸輔助肌'],['rr','呼吸 > 25 次/分'],['voice','說話斷續、聲音微弱']];
+const TRIG=[['inf','感染（肺炎、泌尿道）'],['surg','近期手術'],['steroid','近期開始高劑量類固醇'],['taper','免疫治療減量或中斷'],['preg','懷孕或產後'],['thyroid','甲狀腺疾病'],['stress','情緒壓力、高溫'],['unk','找不到誘因']];
+const DRUGS=[['fq','Fluoroquinolone'],['ag','Aminoglycoside'],['mac','Macrolide'],['mg','靜脈注射鎂'],['bb','β 阻斷劑'],['ici','免疫檢查點抑制劑'],['nmb','神經肌肉阻斷劑'],['aq','Chloroquine 類']];
+const CHOL=[['miosis','瞳孔縮小'],['saliv','大量流涎或痰液'],['gi','腹絞痛、腹瀉'],['fasc','肌束震顫'],['brady','心搏過慢'],['highpy','pyridostigmine > 480 mg/日']];
+const PE_R=[['sepsis','敗血症或活動性嚴重感染','3'],['hemo','血行動態不穩、低血壓','3'],['access','無法建立大管徑血管通路或院內無血漿置換','3'],['bleed','出血傾向、凝血異常或正在抗凝','2'],['mi','近期心肌梗塞或不穩定心律不整','2'],['acei','使用 ACE 抑制劑（需停 24 小時）','1'],['ca','低血鈣','1']];
+const IV_R=[['iga','IgA 缺乏合併抗 IgA 抗體','3'],['renal','腎功能不全（eGFR < 30 或急性腎損傷）','3'],['thromb','近期血栓、中風或高凝血狀態','2'],['chf','心衰竭或無法承受大量液體','2'],['visc','高黏稠度（冷凝球蛋白、多發性骨髓瘤）','1'],['ivgrecent','近 4 週內已用過 IVIG 無效','2']];
+const K0=()=>({wt:55,sex:'f',age:58,fvc:1000,nif:-22,mep:35,co2:44,fvc0:1500,hct:36,ivdays:'5',musk:false,signs:new Set(['bulbar','neck','voice']),trig:new Set(['inf']),drugs:new Set(['fq']),chol:new Set(),pe:new Set(['sepsis']),iv:new Set()});
+let K=K0();
+const NUMS=['wt','age','fvc','nif','mep','co2','fvc0','hct'];
+chipSet('#k-signs',SIGNS,K.signs,'bad','sg');chipSet('#k-trig',TRIG,K.trig,'','tg');chipSet('#k-drugs',DRUGS,K.drugs,'bad','dg');chipSet('#k-chol',CHOL,K.chol,'bad','ch');
+$('#k-pe-risk').innerHTML=PE_R.map(r=>`<label class="check"><input type="checkbox" id="pr-${r[0]}" data-k="${r[0]}"><span>${esc(r[1])}</span></label>`).join('');
+$('#k-iv-risk').innerHTML=IV_R.map(r=>`<label class="check"><input type="checkbox" id="ir-${r[0]}" data-k="${r[0]}"><span>${esc(r[1])}</span></label>`).join('');
+function kTouch(){$('#k-sample').hidden=true;renderCrisis();}
+function bindCrisis(){
+  chipBind('#k-signs',K.signs,kTouch);chipBind('#k-trig',K.trig,kTouch);chipBind('#k-drugs',K.drugs,kTouch);chipBind('#k-chol',K.chol,kTouch);
+  $$('#k-pe-risk input').forEach(i=>i.addEventListener('change',()=>{i.checked?K.pe.add(i.dataset.k):K.pe.delete(i.dataset.k);kTouch();}));
+  $$('#k-iv-risk input').forEach(i=>i.addEventListener('change',()=>{i.checked?K.iv.add(i.dataset.k):K.iv.delete(i.dataset.k);kTouch();}));
+  NUMS.forEach(k=>$('#k-'+k).addEventListener('input',e=>{K[k]=e.target.value===''?null:+e.target.value;kTouch();}));
+  $('#k-sex').addEventListener('change',e=>{K.sex=e.target.value;kTouch();});
+  $('#k-ivdays').addEventListener('change',e=>{K.ivdays=e.target.value;kTouch();});
+}
+function fillCrisis(){
+  NUMS.forEach(k=>$('#k-'+k).value=K[k]??'');$('#k-sex').value=K.sex;$('#k-ivdays').value=K.ivdays;
+  [['#k-signs',K.signs],['#k-trig',K.trig],['#k-drugs',K.drugs],['#k-chol',K.chol],['#k-pe-risk',K.pe],['#k-iv-risk',K.iv]].forEach(([el,s])=>$$(el+' input').forEach(i=>i.checked=s.has(i.dataset.k)));
+}
+function resp(){
+  const wt=K.wt||0,fk=wt&&K.fvc!=null?K.fvc/wt:null,drop=K.fvc0&&K.fvc!=null?(1-K.fvc/K.fvc0)*100:null;
+  const S=K.signs,reasons=[];let lvl=0;
+  const up=(l,r)=>{lvl=Math.max(lvl,l);reasons.push(r);};
+  if(fk!=null){if(fk<15)up(3,`FVC ${fk.toFixed(1)} mL/kg（< 15）`);else if(fk<20)up(2,`FVC ${fk.toFixed(1)} mL/kg（< 20）`);else if(fk<30)up(1,`FVC ${fk.toFixed(1)} mL/kg（< 30）`);}
+  if(K.nif!=null){if(K.nif>-20)up(3,`NIF ${K.nif}（弱於 −20）`);else if(K.nif>-30)up(2,`NIF ${K.nif}（弱於 −30）`);}
+  if(K.mep!=null&&K.mep<40)up(2,`MEP ${K.mep}（< 40）`);
+  if(K.co2!=null){if(K.co2>=50)up(3,`PaCO₂ ${K.co2}（≥ 50）`);else if(K.co2>45)up(2,`PaCO₂ ${K.co2}（> 45）`);}
+  if(drop!=null&&drop>30)up(2,`FVC 較前次下降 ${drop.toFixed(0)}%`);
+  if(S.has('secr'))up(3,'無法清除分泌物');
+  if(S.has('para'))up(3,'腹部矛盾呼吸');
+  if(S.has('bulbar'))up(2,'吞嚥困難、吸入風險');
+  ['neck','count','acc','rr','voice'].forEach(k=>{if(S.has(k))up(1,SIGNS.find(s=>s[0]===k)[1]);});
+  return{lvl,fk,drop,reasons};
+}
+function peiv(){
+  let pe=5,iv=5;const pw=[],iw=[];
+  PE_R.forEach(r=>{if(K.pe.has(r[0])){pe-=+r[2];pw.push(r[1]);}});
+  IV_R.forEach(r=>{if(K.iv.has(r[0])){iv-=+r[2];iw.push(r[1]);}});
+  const peFor=[],ivFor=[];
+  if(K.musk){pe+=2;peFor.push('MuSK 抗體陽性，血漿置換反應可能較佳');}
+  if(K.iv.has('ivgrecent')){peFor.push('IVIG 無效時改用血漿置換');}
+  const peAbs=K.pe.has('sepsis')||K.pe.has('hemo')||K.pe.has('access');
+  const ivAbs=K.iv.has('iga')||K.iv.has('renal');
+  let pick;
+  if(peAbs&&ivAbs)pick='both';else if(peAbs)pick='iv';else if(ivAbs)pick='pe';else if(Math.abs(pe-iv)<=1)pick='either';else pick=pe>iv?'pe':'iv';
+  return{pe:Math.max(0,pe),iv:Math.max(0,iv),pw,iw,peFor,pick};
+}
+function doses(){
+  const wt=K.wt||0,hct=(K.hct||40)/100,bv=wt*(K.sex==='m'?70:65),pv=bv*(1-hct)/1000;
+  const ivTot=wt*2,ivDay=ivTot/(+K.ivdays);
+  return{pv,ivTot,ivDay};
+}
+function renderCrisis(){
+  const r=resp(),p=peiv(),d=doses();
+  const fk=r.fk;
+  const m=(k,v,u,t,cls)=>`<div class="m ${cls||''}"><div class="k">${k}</div><div class="v">${v}<small>${u}</small></div><div class="t">${t}</div></div>`;
+  $('#k-meters').innerHTML=
+    m('FVC／體重',fk!=null?fk.toFixed(1):'—','mL/kg','警戒 < 20',fk!=null?(fk<15?'bad':fk<20?'bad':fk<30?'mid':''):'')+
+    m('NIF',K.nif??'—','cmH₂O','警戒弱於 −30',K.nif!=null?(K.nif>-20?'bad':K.nif>-30?'bad':''):'')+
+    m('MEP',K.mep??'—','cmH₂O','警戒 < 40',K.mep!=null&&K.mep<40?'bad':'')+
+    m('FVC 變化',r.drop!=null?(r.drop>0?'−':'+')+Math.abs(r.drop).toFixed(0):'—','%','警戒下降 > 30%',r.drop!=null&&r.drop>30?'bad':'');
+  const L=[
+    ['go','一般病房監測','每 4–6 小時測 FVC 與 NIF，惡化時升級照護。'],
+    ['warn','加護或中重度監測病房','每 2–4 小時測 FVC 與 NIF，準備快速免疫治療。'],
+    ['stop','加護病房，高度插管風險','立即啟動血漿置換或 IVIG；PaCO₂ < 50 且無嚴重延髓無力時可嘗試 BiPAP，並準備插管。'],
+    ['stop','建議氣管插管','符合插管條件：保護呼吸道並給予呼吸器支持，同時啟動快速免疫治療。']];
+  const R=L[r.lvl];
+  $('#k-resp').innerHTML=`<div class="alert ${R[0]}"><strong>${R[1]}</strong><span class="small">${R[2]}</span>${r.reasons.length?`<span class="small">依據：${r.reasons.map(esc).join('、')}</span>`:''}</div>`;
+  $('#k1').classList.toggle('hot',r.lvl>=2);
+  /* triggers */
+  const tOut=[];
+  if(K.drugs.size)tOut.push(`<div class="alert stop"><strong>停用或更換可疑藥物</strong><span class="small">${DRUGS.filter(x=>K.drugs.has(x[0])).map(x=>x[1]).join('、')}。${K.drugs.has('fq')||K.drugs.has('ag')||K.drugs.has('mac')?'感染需治療時改用 β-lactam 類等較安全的抗生素。':''}${K.drugs.has('ici')?'免疫檢查點抑制劑相關 MG 常合併肌炎或心肌炎，需驗 CK 與 troponin。':''}</span></div>`);
+  if(K.trig.has('inf'))tOut.push('<div class="alert warn"><strong>治療感染</strong><span class="small">胸部 X 光、痰液與尿液培養；感染會影響血漿置換或 IVIG 的選擇（見步驟 3）。</span></div>');
+  if(K.trig.has('steroid'))tOut.push('<div class="alert warn"><strong>類固醇引起的短暫惡化</strong><span class="small">常在開始高劑量後 5–10 天出現，通常持續數天；已開始者不必停藥，需加強監測。</span></div>');
+  if(K.chol.size>=2)tOut.push('<div class="alert stop"><strong>懷疑膽鹼性危機</strong><span class="small">停用 pyridostigmine，確保呼吸道，必要時給 atropine 處理毒蕈鹼症狀。</span></div>');
+  else tOut.push('<div class="alert info"><strong>Pyridostigmine</strong><span class="small">若已插管或分泌物多，暫停使用；未插管者維持原劑量或減量，避免增加劑量以免混淆病情。</span></div>');
+  $('#k-trig-out').innerHTML=`<div class="stack" style="gap:8px">${tOut.join('')}</div>`;
+  /* PE vs IVIG */
+  const win=p.pick;
+  $('#k-vs').innerHTML=
+   `<div class="col${win==='pe'?' win':''}"><h3>血漿置換 (PE) ${win==='pe'?'<span class="pill go">建議</span>':p.pw.length?'<span class="pill warn">有顧慮</span>':''}</h3><div class="score"><i style="width:${Math.min(100,p.pe/7*100)}%"></i></div>
+     <ul>${p.peFor.map(t=>`<li>${esc(t)}</li>`).join('')}${p.pw.map(t=>`<li style="color:var(--stop)">${esc(t)}</li>`).join('')}<li>起效約 2–5 天，可能略快於 IVIG</li><li>併發症：導管感染或氣胸、低血壓、低血鈣（檸檬酸）、凝血因子下降</li></ul>
+     <div class="dose">估計血漿量 ${d.pv.toFixed(1)} L<br>每次置換 1.0–1.5 倍血漿量（${d.pv.toFixed(1)}–${(d.pv*1.5).toFixed(1)} L）<br>隔日一次，共 5 次（約 10 天）</div></div>
+   <div class="col${win==='iv'?' win':''}"><h3>IVIG ${win==='iv'?'<span class="pill go">建議</span>':p.iw.length?'<span class="pill warn">有顧慮</span>':''}</h3><div class="score"><i style="width:${Math.min(100,p.iv/7*100)}%"></i></div>
+     <ul>${p.iw.map(t=>`<li style="color:var(--stop)">${esc(t)}</li>`).join('')}<li>不需特殊血管通路，多數醫院可立即給予</li><li>併發症：頭痛、無菌性腦膜炎、急性腎損傷、血栓、溶血、容積過多</li></ul>
+     <div class="dose">總劑量 2 g/kg = ${d.ivTot.toFixed(0)} g<br>${K.ivdays} 天：每天 ${d.ivDay.toFixed(0)} g（${(2/ +K.ivdays).toFixed(1)} g/kg/日）<br>高齡或腎臟風險者選 5 天、放慢輸注速度並補足水分</div></div>`;
+  const choiceTxt={pe:['go','建議血漿置換',''],iv:['go','建議 IVIG',''],either:['info','兩者皆可','MGFA 共識認為兩者療效相當，依院內可取得性與病人偏好決定。'],both:['stop','兩者都有重要顧慮','請會診血液科、腎臟科與重症團隊，權衡風險後決定，並加強支持性治療。']}[win];
+  const extra='注意：先給 IVIG 後短期內再做血漿置換會移除 IVIG；兩者之間的轉換需間隔規劃。';
+  $('#k-choice').innerHTML=`<div class="alert ${choiceTxt[0]}"><strong>${choiceTxt[1]}</strong><span class="small">${choiceTxt[2]||(win==='pe'?(p.peFor[0]||'依勾選的病人因素，IVIG 風險較高。'):'依勾選的病人因素，血漿置換風險較高。')} ${extra}</span></div>`;
+  /* immuno step */
+  const imm=[];
+  imm.push(`<div class="opt first"><div class="t">高劑量類固醇</div><div class="d">Prednisolone 約 1 mg/kg/日（常用 60–80 mg）。在已開始血漿置換或 IVIG、且有監測的環境下啟動，以降低 5–10 天內短暫惡化的風險。同時給予胃腸保護、血糖監測與骨質保護。</div></div>`);
+  imm.push(`<div class="opt alt"><div class="t">非類固醇免疫抑制劑</div><div class="d">原本已使用者持續；尚未使用者評估開始 azathioprine、mycophenolate 或 tacrolimus（見「免疫治療管理」分頁）。這些藥物起效需數月，無法處理急性危機。</div></div>`);
+  if(K.musk)imm.push(`<div class="opt first"><div class="t">MuSK 抗體陽性：考慮早期 rituximab</div><div class="d">MGFA 2020 更新建議 MuSK-MG 對初始免疫治療反應不佳時，及早考慮 rituximab。</div></div>`);
+  else imm.push(`<div class="opt alt"><div class="t">難治或反覆危機：標靶生物製劑</div><div class="d">AChR 陽性者可考慮補體抑制劑（eculizumab、ravulizumab、zilucoplan，需先接種腦膜炎雙球菌疫苗）或 FcRn 抑制劑（efgartigimod、rozanolixizumab）。健保給付條件請依最新規定。</div></div>`);
+  $('#k-imm').innerHTML=imm.join('');
+  /* summary */
+  const choiceShort={pe:'血漿置換',iv:'IVIG',either:'血漿置換或 IVIG（兩者皆可）',both:'需多科會診決定'}[win];
+  $('#k-sum').innerHTML=`<div class="alert ${R[0]}"><strong>${R[1]}</strong></div>
+   <div class="stack" style="gap:6px;margin-top:10px;font-size:14px">
+    <div><span class="flabel">快速免疫治療</span><div><b>${choiceShort}</b></div></div>
+    ${win==='pe'||win==='either'?`<div class="dose" style="margin-top:0">PE：${d.pv.toFixed(1)}–${(d.pv*1.5).toFixed(1)} L × 5 次，隔日</div>`:''}
+    ${win==='iv'||win==='either'?`<div class="dose" style="margin-top:0">IVIG：${d.ivDay.toFixed(0)} g/日 × ${K.ivdays} 天（共 ${d.ivTot.toFixed(0)} g）</div>`:''}
+    ${K.drugs.size?`<div><span class="flabel">停用藥物</span><div>${DRUGS.filter(x=>K.drugs.has(x[0])).map(x=>x[1]).join('、')}</div></div>`:''}
+    <div><span class="flabel">類固醇</span><div>Prednisolone 約 ${K.wt?Math.min(80,Math.round(K.wt/5)*5):60} mg/日，於快速免疫治療開始後啟動</div></div>
+   </div>`;
+  window.__k={r,p,d,R,choiceShort};
+}
+$('#k-copy').addEventListener('click',()=>{
+  const {r,p,d,R,choiceShort}=window.__k;
+  const L=[`【肌無力危機評估】${K.age} 歲 ${K.sex==='m'?'男':'女'}，${K.wt} kg，MGFA ${mgfa()}`];
+  L.push(`呼吸：FVC ${K.fvc??'—'} mL（${r.fk!=null?r.fk.toFixed(1):'—'} mL/kg）、NIF ${K.nif??'—'}、MEP ${K.mep??'—'} cmH2O、PaCO2 ${K.co2??'—'} mmHg`);
+  L.push(`分流：${R[1]}${r.reasons.length?'（'+r.reasons.join('、')+'）':''}`);
+  L.push(`誘因：${[...TRIG.filter(x=>K.trig.has(x[0])).map(x=>x[1]),...DRUGS.filter(x=>K.drugs.has(x[0])).map(x=>x[1])].join('、')||'未明'}`);
+  L.push(`快速免疫治療：${choiceShort}` + (p.pick!=='iv'&&p.pick!=='both'?`；PE 每次 ${d.pv.toFixed(1)}–${(d.pv*1.5).toFixed(1)} L × 5 次隔日`:'') + (p.pick!=='pe'&&p.pick!=='both'?`；IVIG 2 g/kg 共 ${d.ivTot.toFixed(0)} g，分 ${K.ivdays} 天`:''));
+  if(p.pw.length)L.push('PE 顧慮：'+p.pw.join('、'));if(p.iw.length)L.push('IVIG 顧慮：'+p.iw.join('、'));
+  L.push('依據：MGFA 國際共識 2016／2020。');
+  copyText(L.join('\n'));
+});
+$('#k-reset').addEventListener('click',()=>{K={wt:null,sex:'f',age:null,fvc:null,nif:null,mep:null,co2:null,fvc0:null,hct:null,ivdays:'5',musk:$('#c-sero').value==='musk',signs:new Set(),trig:new Set(),drugs:new Set(),chol:new Set(),pe:new Set(),iv:new Set()};$('#k-sample').hidden=true;fillCrisis();renderCrisis();});
+
+/* ================= 3. Immunotherapy ================= */
+const USED=[['aza','Azathioprine'],['mmf','Mycophenolate'],['tac','Tacrolimus'],['csa','Cyclosporine'],['mtx','Methotrexate'],['rtx','Rituximab'],['comp','補體抑制劑'],['fcrn','FcRn 抑制劑']];
+const MRISK=[['dm','糖尿病'],['osteo','骨質疏鬆'],['htn','高血壓控制不佳'],['psych','情緒或精神副作用'],['preg','懷孕或計畫懷孕'],['tpmt','TPMT 或 NUDT15 活性低'],['renalm','腎功能不全'],['infect','反覆感染或 B 肝帶原']];
+const M={age:45,sero:'achr',type:'gen',thy:'none',pred:20,predmo:8,goal:'not',used:new Set(),risk:new Set(['dm'])};
+chipSet('#m-used',USED,M.used,'','mu');chipSet('#m-risk',MRISK,M.risk,'','mr');
+function mTouch(){$('#m-sample').hidden=true;renderImm();}
+chipBind('#m-used',M.used,mTouch);chipBind('#m-risk',M.risk,mTouch);
+['age','pred','predmo'].forEach(k=>$('#m-'+k).addEventListener('input',e=>{M[k]=+e.target.value||0;mTouch();}));
+['sero','type','thy'].forEach(k=>$('#m-'+k).addEventListener('change',e=>{M[k]=e.target.value;if(k==='sero'){K.musk=M.sero==='musk';renderCrisis();}mTouch();}));
+segBind('#m-goal',v=>{M.goal=v;mTouch();});
+function fillImm(){['age','pred','predmo','sero','type','thy'].forEach(k=>$('#m-'+k).value=M[k]);segSet('#m-goal',M.goal);}
+const TBL=[
+ ['Pyridostigmine','30–60 mg 每 4–6 小時，依症狀調整','15–30 分鐘','腸胃絞痛、腹瀉、流涎；MuSK-MG 常反應差或加重'],
+ ['Prednisolone','門診由 10–20 mg/日漸增；住院可由 60–80 mg/日起始','2–4 週','短暫惡化、血糖、血壓、骨質、白內障、情緒；達標後緩慢減量'],
+ ['Azathioprine','2–3 mg/kg/日','6–12 個月','先驗 TPMT／NUDT15；CBC 與肝功能；與 allopurinol 交互作用'],
+ ['Mycophenolate','1–1.5 g 每日 2 次','6–12 個月','致畸胎，懷孕禁用；腸胃不適、白血球低下'],
+ ['Tacrolimus','3–5 mg/日（依血中濃度）','1–3 個月','腎功能、血糖、血壓、手抖；藥物交互作用多'],
+ ['Methotrexate','10–20 mg 每週一次＋葉酸','數月','MGFA 2020：可考慮做為類固醇節省藥物；肝、肺毒性，懷孕禁用'],
+ ['Rituximab','375 mg/m² 每週 × 4，或 1 g × 2（間隔 2 週）','1–3 個月','MuSK-MG 早期選項；B 肝篩檢、輸注反應、感染'],
+ ['補體抑制劑','Eculizumab、ravulizumab、zilucoplan','1–2 週','限 AChR 陽性；需先接種腦膜炎雙球菌疫苗'],
+ ['FcRn 抑制劑','Efgartigimod、rozanolixizumab 週期性給藥','1–2 週','AChR 陽性（rozanolixizumab 亦含 MuSK）；感染、頭痛'],
+ ['IVIG／血漿置換（維持）','定期給予','數天','難治者的橋接或維持治療']
+];
+$('#m-tbl tbody').innerHTML=TBL.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td class="mono small">${esc(r[1])}</td><td class="small">${esc(r[2])}</td><td class="small">${esc(r[3])}</td></tr>`).join('');
+function renderImm(){
+  const R=M.risk,U=M.used,nIS=[...U].filter(k=>['aza','mmf','tac','csa','mtx'].includes(k)).length;
+  const steroidRisk=['dm','osteo','htn','psych'].filter(k=>R.has(k));
+  const refractory=M.goal==='not'&&M.pred>0&&nIS>=2;
+  let stage;
+  if(refractory)stage=['stop','難治型重症肌無力','已用類固醇與至少 2 種免疫抑制劑仍未達目標（MGFA 2016 定義）。'];
+  else if(M.goal==='met'&&M.pred>0)stage=['go','已達治療目標','可開始或持續緩慢減少類固醇。'];
+  else if(M.goal==='met')stage=['go','已達治療目標','維持目前治療並定期追蹤。'];
+  else if(M.pred>0&&M.predmo>=6)stage=['warn','類固醇治療未達目標或無法減量','應加入或更換非類固醇免疫抑制劑。'];
+  else if(M.pred>0)stage=['warn','類固醇治療中','多數病人在數週至數月內改善，持續評估。'];
+  else stage=['warn','僅症狀治療或尚未開始免疫治療',''];
+  $('#m-stage').innerHTML=`<div class="alert ${stage[0]}"><strong>${stage[1]}</strong><span class="small">${stage[2]}</span></div>
+   <p class="small muted" style="margin-top:10px">MGFA 治療目標：最小症狀表現 (MMS) 或更好，且藥物副作用不超過 CTCAE 第 1 級。</p>`;
+  const o=[];const add=(lv,t,d,tag)=>o.push(`<div class="opt ${lv}"><div class="t">${t}${tag?` <span class="pill ${lv==='avoid'?'stop':lv==='first'?'go':'ev'}">${tag}</span>`:''}</div><div class="d">${d}</div></div>`);
+  /* thymectomy */
+  if(M.thy==='thymoma')add('first','胸腺切除（胸腺瘤）','所有胸腺瘤病人都應手術切除，並依病理決定後續腫瘤治療。','MGFA');
+  else if(M.thy!=='post'&&M.sero==='achr'&&M.type==='gen'&&M.age>=18&&M.age<=50)add('first','考慮胸腺切除','AChR 陽性、全身型、18–50 歲的非胸腺瘤病人，及早切除可改善症狀並減少類固醇用量（MGTX 試驗）。','MGFA');
+  else if(M.thy!=='post'&&M.sero==='musk')add('avoid','不建議胸腺切除','MuSK 抗體陽性病人胸腺切除的效益未被證實。');
+  else if(M.thy!=='post'&&M.sero==='achr'&&M.type==='gen')add('alt','胸腺切除可個別考慮',`年齡 ${M.age} 歲不在 MGTX 收案範圍，對治療反應不佳或無法耐受免疫治療時可討論。`);
+  /* pyridostigmine */
+  if(M.sero==='musk')add('alt','Pyridostigmine 效果有限','MuSK-MG 對乙醯膽鹼酯酶抑制劑常反應差，甚至出現肌束震顫與惡化。');
+  /* steroids */
+  if(M.goal==='not'&&M.pred===0)add('first','開始類固醇',`${M.type==='ocu'?'眼肌型症狀持續困擾時可使用低劑量類固醇，也可降低轉成全身型的風險。':'門診由 10–20 mg/日開始，每 3–7 天增加 5 mg，減少短暫惡化；嚴重者住院由高劑量開始。'}${steroidRisk.length?`<b>此病人有類固醇風險因子（${steroidRisk.map(k=>MRISK.find(x=>x[0]===k)[1]).join('、')}），應同時開始非類固醇免疫抑制劑。</b>`:''}`,'MGFA');
+  if(M.goal==='met'&&M.pred>0)add('first','緩慢減少類固醇',`目前 ${M.pred} mg/日。達標並維持後逐步減量，例如每 2–4 週減 5 mg 至 20 mg，之後每 4 週減 2.5 mg，以最低有效劑量維持。減量期間症狀復發時回到前一劑量。`,'');
+  /* steroid-sparing */
+  const needIS=M.goal==='not'&&(M.pred>0&&M.predmo>=3||steroidRisk.length)||(M.pred>=10&&M.predmo>=6)||steroidRisk.length>0;
+  if(needIS&&!refractory&&nIS===0){
+    const opts=[];
+    if(!R.has('tpmt'))opts.push('<b>Azathioprine</b> 2–3 mg/kg/日（先驗 TPMT）');
+    if(!R.has('preg'))opts.push('<b>Mycophenolate</b> 1–1.5 g bid（懷孕禁用）');
+    if(!R.has('renalm'))opts.push('<b>Tacrolimus</b> 3–5 mg/日，監測血中濃度');
+    add('first','加入非類固醇免疫抑制劑',`適用：類固醇禁忌或拒用、副作用明顯、反應不足，或無法減量。可選：${opts.join('；')}。起效需 6–12 個月，期間維持類固醇。`,'MGFA');
+    if(R.has('preg'))add('avoid','懷孕或計畫懷孕','避免 mycophenolate 與 methotrexate；azathioprine 在懷孕期間可考慮繼續使用。');
+  }else if(M.goal==='not'&&nIS===1&&!refractory){
+    add('alt','更換或加強免疫抑制劑','確認目前藥物劑量與使用時間是否足夠（azathioprine、mycophenolate 需 6–12 個月）。仍不足時更換為另一種，或考慮 methotrexate。');
+  }
+  /* refractory */
+  if(refractory||M.sero==='musk'&&M.goal==='not'){
+    if(M.sero==='musk')add('first','Rituximab','MuSK-MG 對初始免疫治療反應不佳時，及早考慮（MGFA 2020）。','MGFA 2020');
+    if(M.sero==='achr'){add('first','補體抑制劑','Eculizumab、ravulizumab 或 zilucoplan；需先接種腦膜炎雙球菌疫苗。','MGFA 2020');add('alt','FcRn 抑制劑','Efgartigimod 或 rozanolixizumab，起效快，可週期性給藥。');add('alt','Rituximab','AChR 陽性難治者效果較不一致，可做為選項。');}
+    if(M.sero==='neg'||M.sero==='lrp4')add('alt','難治型選項','Rituximab、長期 IVIG 或血漿置換；標靶藥物多限 AChR 陽性。');
+    add('alt','長期 IVIG 或血漿置換','做為其他治療起效前的橋接，或維持治療。');
+  }
+  if(R.has('infect'))add('alt','感染風險','開始免疫抑制前篩檢 B 肝、C 肝、結核；高劑量類固醇合併其他免疫抑制劑時考慮預防肺囊蟲肺炎。');
+  if(steroidRisk.length&&M.pred>0)add('alt','類固醇副作用預防','鈣與維生素 D、需要時 bisphosphonate；血糖、血壓、眼壓與白內障追蹤。');
+  $('#m-out').innerHTML=o.join('')||'<p class="muted">目前治療符合目標，持續追蹤。</p>';
+}
+
+/* ---------- init ---------- */
+fillCls();renderCls();
+bindCrisis();fillCrisis();renderCrisis();
+fillImm();renderImm();
+let start='crisis';const h=(location.hash||'').slice(1);
+if(TABS.includes(h))start=h;else{try{const s=localStorage.getItem('mg-tab');if(TABS.includes(s))start=s;}catch(e){}}
+showTab(start);
+})();
+</script>
+</body>
+</html>
