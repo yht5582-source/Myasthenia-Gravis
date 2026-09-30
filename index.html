@@ -253,6 +253,7 @@ th{font-weight:500;color:var(--ink-2);font-size:12.5px;white-space:nowrap}
           <div class="card">
             <div class="node-h"><h3>快速免疫治療：血漿置換或 IVIG</h3></div>
             <p class="small muted" style="margin-bottom:8px">MGFA 共識：兩者用於嚴重全身型重症肌無力療效相當，選擇取決於病人因素與院內資源。勾選適用的狀況：</p>
+            <div class="alert warn" style="margin-bottom:10px"><strong>健保：IVIG 給付規定（8.1.3）未列重症肌無力</strong><span class="small">用於肌無力危機屬健保給付範圍外，需向病人或家屬說明費用。詳見「免疫治療管理」分頁的健保給付現況。</span></div>
             <div class="row" style="gap:16px;align-items:flex-start">
               <div style="flex:1 1 260px;min-width:0"><div class="flabel">不利於血漿置換</div><div id="k-pe-risk"></div></div>
               <div style="flex:1 1 260px;min-width:0"><div class="flabel">不利於 IVIG</div><div id="k-iv-risk"></div></div>
@@ -336,7 +337,23 @@ th{font-weight:500;color:var(--ink-2);font-size:12.5px;white-space:nowrap}
     <div class="card" style="margin-top:18px">
       <h3>常用免疫治療藥物</h3>
       <div class="tablebox"><table id="m-tbl"><thead><tr><th>藥物</th><th>劑量</th><th>起效</th><th>監測與注意</th></tr></thead><tbody></tbody></table></div>
-      <p class="small muted" style="margin-top:8px">生物製劑的適應症與健保給付條件請依最新健保藥品給付規定。</p>
+      <p class="small muted" style="margin-top:8px">健保給付現況見下方。</p>
+    </div>
+    <div class="card" style="margin-top:18px" id="nhi">
+      <h3>台灣健保給付現況 <span class="pill warn">查核：2026-09-30</span></h3>
+      <p class="small muted" style="margin-bottom:8px">依健保署「最新版藥品給付規定內容(分章節)」第八節 免疫製劑（115.9.22 更新）與第一節 神經系統藥物（115.8.21 更新）逐條查核。兩節條文都沒有出現重症肌無力。</p>
+      <div class="tablebox"><table>
+        <thead><tr><th>藥品</th><th>給付規定條文</th><th>重症肌無力是否給付</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td><b>IVIG</b>（高單位免疫球蛋白）</td><td class="mono small">8.1.3</td><td><span class="pill stop">未列入</span></td><td class="small">給付適應症共 11 項（如免疫低下、ITP、川崎病、Guillain-Barré 症候群、CIDP、MMN 等），不含重症肌無力或肌無力危機。</td></tr>
+          <tr><td><b>Eculizumab、ravulizumab</b>（補體抑制劑）</td><td class="mono small">8.2.10</td><td><span class="pill stop">未列入</span></td><td class="small">限陣發性夜間血紅素尿症 (PNH) 與非典型尿毒溶血症候群 (aHUS)，需特殊專案審查。</td></tr>
+          <tr><td><b>Ravulizumab 用於全身型 MG</b></td><td class="small">審議中</td><td><span class="pill warn">尚未公告</span></td><td class="small">藥品專家諮詢會議 113/9、114/2 建議暫不給付；114/12 建議納入給付，查驗中心補充報告於 115/4/8 完成。廠商建議條件為 MGFA IIb–IV、曾用至少 2 種免疫抑制劑仍無法控制；專家會議另加續用條件：6 個月後 MG-ADL 較基礎值進步 ≥ 2 分。截至 115.9.22 版給付規定尚未納入。</td></tr>
+          <tr><td><b>Efgartigimod、rozanolixizumab</b>（FcRn 抑制劑）、<b>zilucoplan</b></td><td class="small">無</td><td><span class="pill stop">未列入</span></td><td class="small">第八節無相關給付規定，也未查到健保醫療科技評估紀錄。</td></tr>
+          <tr><td><b>Rituximab</b></td><td class="mono small">8.2.7</td><td><span class="pill stop">未列入</span></td><td class="small">第八節限類風濕性關節炎與尋常性天疱瘡；癌症適應症另列於第九節。重症肌無力不在給付範圍。</td></tr>
+          <tr><td><b>Tacrolimus、cyclosporin</b></td><td class="mono small">8.2.2、8.2.1</td><td><span class="pill stop">未列入</span></td><td class="small">條文列出器官移植、乾癬、類風濕性關節炎、腎病症候群等用途，未列重症肌無力。</td></tr>
+        </tbody>
+      </table></div>
+      <p class="small muted" style="margin-top:8px">未查核：azathioprine、mycophenolate 等無個別給付規定的藥品，以及血漿置換術（屬醫療服務給付項目）。實際核付以健保署最新公告與審查結果為準。</p>
     </div>
   </section>
 
@@ -385,7 +402,8 @@ th{font-weight:500;color:var(--ink-2);font-size:12.5px;white-space:nowrap}
           <li>Wolfe GI, et al. Randomized trial of thymectomy in myasthenia gravis (MGTX). <i>N Engl J Med</i> 2016;375:511–522.</li>
           <li>Barth D, et al. Comparison of IVIg and PLEX in patients with myasthenia gravis. <i>Neurology</i> 2011;76:2017–2023.</li>
           <li>Seneviratne J, et al. Noninvasive ventilation in myasthenic crisis. <i>Arch Neurol</i> 2008;65:54–58.</li>
-          <li>台灣神經學學會神經肌肉疾病相關共識與健保藥品給付規定（請以最新公告版本為準）。</li>
+          <li>衛生福利部中央健康保險署。最新版藥品給付規定內容（分章節）：第八節 免疫製劑（115.9.22 更新）、第一節 神經系統藥物（115.8.21 更新）。<a href="https://www.nhi.gov.tw/ch/cp-7593-ad2a9-3397-1.html" target="_blank" rel="noopener">nhi.gov.tw</a></li>
+          <li>財團法人醫藥品查驗中心。醫療科技評估報告補充資料：Ultomiris（ravulizumab）用於全身型重症肌無力，115 年 4 月 8 日。<a href="https://www.nhi.gov.tw/ch/dl-98711-c447727af4b1442f94da08bbe0805363-1.pdf" target="_blank" rel="noopener">nhi.gov.tw</a></li>
         </ol>
       </div>
     </div>
@@ -543,7 +561,7 @@ function renderCrisis(){
   imm.push(`<div class="opt first"><div class="t">高劑量類固醇</div><div class="d">Prednisolone 約 1 mg/kg/日（常用 60–80 mg）。在已開始血漿置換或 IVIG、且有監測的環境下啟動，以降低 5–10 天內短暫惡化的風險。同時給予胃腸保護、血糖監測與骨質保護。</div></div>`);
   imm.push(`<div class="opt alt"><div class="t">非類固醇免疫抑制劑</div><div class="d">原本已使用者持續；尚未使用者評估開始 azathioprine、mycophenolate 或 tacrolimus（見「免疫治療管理」分頁）。這些藥物起效需數月，無法處理急性危機。</div></div>`);
   if(K.musk)imm.push(`<div class="opt first"><div class="t">MuSK 抗體陽性：考慮早期 rituximab</div><div class="d">MGFA 2020 更新建議 MuSK-MG 對初始免疫治療反應不佳時，及早考慮 rituximab。</div></div>`);
-  else imm.push(`<div class="opt alt"><div class="t">難治或反覆危機：標靶生物製劑</div><div class="d">AChR 陽性者可考慮補體抑制劑（eculizumab、ravulizumab、zilucoplan，需先接種腦膜炎雙球菌疫苗）或 FcRn 抑制劑（efgartigimod、rozanolixizumab）。健保給付條件請依最新規定。</div></div>`);
+  else imm.push(`<div class="opt alt"><div class="t">難治或反覆危機：標靶生物製劑</div><div class="d">AChR 陽性者可考慮補體抑制劑（eculizumab、ravulizumab、zilucoplan，需先接種腦膜炎雙球菌疫苗）或 FcRn 抑制劑（efgartigimod、rozanolixizumab）。目前健保均未給付於重症肌無力（ravulizumab 審議中）。</div></div>`);
   $('#k-imm').innerHTML=imm.join('');
   /* summary */
   const choiceShort={pe:'血漿置換',iv:'IVIG',either:'血漿置換或 IVIG（兩者皆可）',both:'需多科會診決定'}[win];
